@@ -1,9 +1,11 @@
 import csv
 import re
 import json
+import os
 from faker import Faker
 import unidecode
 import PySimpleGUI as sg
+from datetime import datetime
 
 # Inicialização do Faker
 fake = Faker('pt_BR')  # Usar o local pt_BR para gerar CPFs no formato correto
@@ -69,9 +71,9 @@ header = [
 
 # Definir o layout da interface
 layout = [
-    [sg.Text("Nº Conta"), sg.Input(key='-CONTA-')],
-    [sg.Text("Nº Bankcore"), sg.Input(key='-BANKCORE-')],
-    [sg.Text("Qtde."), sg.Input(key='-NUM_LINHAS-', default_text='1')],
+    [sg.Text("Número da conta"), sg.Input(key='-CONTA-')],
+    [sg.Text("Número da Bankcore"), sg.Input(key='-BANKCORE-')],
+    [sg.Text("Número de linhas a gerar"), sg.Input(key='-NUM_LINHAS-', default_text='1')],
     [sg.Radio('CPF', "RADIO1", key='-CPF-', enable_events=True), sg.Radio('CNPJ', "RADIO1", key='-CNPJ-', enable_events=True)],
     [sg.Button('Gerar CSV', disabled=True), sg.Button('Gerar JSON', disabled=True)]
 ]
@@ -96,7 +98,7 @@ while True:
     
     update_buttons(window, values)
     
-    if event == 'Gerar CSV':
+    if event == 'Gerar CSV' or event == 'Gerar JSON':
         nconta = values['-CONTA-']
         bcore = values['-BANKCORE-']
         num_linhas = int(values['-NUM_LINHAS-'])
@@ -105,30 +107,32 @@ while True:
         # Geração dos dados
         rows = [generate_data(bcore, nconta, use_cnpj) for _ in range(num_linhas)]
         
-        # Salvando no arquivo CSV
-        with open('dados.csv', 'w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(header)
-            for row in rows:
-                writer.writerow(row)
+        # Criar pasta se não existir
+        output_dir = 'arquivos gerados'
+        os.makedirs(output_dir, exist_ok=True)
         
-        sg.popup("CSV gerado com sucesso!")
-    
-    if event == 'Gerar JSON':
-        nconta = values['-CONTA-']
-        bcore = values['-BANKCORE-']
-        num_linhas = int(values['-NUM_LINHAS-'])
-        use_cnpj = values['-CNPJ-']
+        # Obter a data e hora atual
+        current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
         
-        # Geração dos dados
-        rows = [generate_data(bcore, nconta, use_cnpj) for _ in range(num_linhas)]
+        if event == 'Gerar CSV':
+            # Salvando no arquivo CSV
+            csv_file = os.path.join(output_dir, f'dados_{current_time}.csv')
+            with open(csv_file, 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(header)
+                for row in rows:
+                    writer.writerow(row)
+            
+            sg.popup("CSV gerado com sucesso!")
         
-        # Salvando no arquivo JSON
-        json_data = [dict(zip(header, row)) for row in rows]
-        with open('dados.json', 'w') as file:
-            json.dump(json_data, file, ensure_ascii=False, indent=4)
-        
-        sg.popup("JSON gerado com sucesso!")
+        if event == 'Gerar JSON':
+            # Salvando no arquivo JSON
+            json_file = os.path.join(output_dir, f'dados_{current_time}.json')
+            json_data = [dict(zip(header, row)) for row in rows]
+            with open(json_file, 'w') as file:
+                json.dump(json_data, file, ensure_ascii=False, indent=4)
+            
+            sg.popup("JSON gerado com sucesso!")
 
 # Fechar a janela
 window.close()
