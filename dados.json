@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Júlia Monteiro",
+        "taxIdentifier": "94650283124",
+        "externalID": "190c6f655974441da71bef35c0283124",
+        "cellphone": "08101947821",
+        "email": "júlia.monteiro@example.com",
+        "bornAt": "1984-03-01",
+        "motherName": "Srta. Ana Sophia Garcia",
+        "fantasyName": "Trinus Account",
+        "bankBranchAccount": "0001",
+        "bankAccount": "123",
+        "alias": "Trinus Account",
+        "street": "Rua Arnaldo de Jesus",
+        "addressNumber": "10",
+        "complement": "",
+        "zipCode": "24460220",
+        "neighborhood": "MUTUA",
+        "city": "SAO GONCALO",
+        "state": "RJ",
+        "country": "Brasil"
+    }
+]

@@ -16,32 +16,50 @@ def generate_userId(tax_id):
     return '190c6f655974441da71bef35c' + tax_id[-7:]
 
 # Função para gerar os dados
-def generate_data(core_bank_id, bank_account):
-    tax_id = remove_masks(fake.cpf())
+def generate_data(core_bank_id, bank_account, use_cnpj):
+    tax_id = remove_masks(fake.cnpj() if use_cnpj else fake.cpf())
     name = fake.name()
     email = name.replace(" ", ".").lower() + "@example.com"
     cellphone = remove_masks(fake.phone_number())
-    # corebankid
     motherName = fake.name()
     bornAt = fake.date_of_birth(minimum_age=18, maximum_age=90).strftime('%Y-%m-%d')
-    paymentAccountType = 1
-    # paymentAccountCoreBankId
-    bankBranchAccount = 1
-    login = tax_id
-    investmentProfile = 1
+    fantasyName = "Trinus Account"
+    street = "Rua Arnaldo de Jesus"
+    addressNumber = "10"
+    complement = ""
+    zipCode = "24460220"
+    neighborhood = "MUTUA"
+    city = "SAO GONCALO"
+    state = "RJ"
+    country = "Brasil"
 
     return [
-        generate_userId(tax_id), name, generate_userId(tax_id), name, tax_id, email, cellphone, 'c', motherName, bornAt,
-        paymentAccountType, core_bank_id, bankBranchAccount, login, investmentProfile, email, cellphone, bank_account,
-        motherName, bornAt, paymentAccountType, core_bank_id, bankBranchAccount, login, investmentProfile
+        name,  # "name"
+        tax_id,  # "taxIdentifier"
+        generate_userId(tax_id),  # "externalID"
+        cellphone,  # "cellphone"
+        email,  # "email"
+        bornAt,  # "bornAt"
+        motherName,  # "motherName"
+        fantasyName,  # "fantasyName"
+        "0001",  # "bankBranchAccount"
+        bank_account,  # "bankAccount"
+        fantasyName,  # "alias"
+        street,  # "street"
+        addressNumber,  # "addressNumber"
+        complement,  # "complement"
+        zipCode,  # "zipCode"
+        neighborhood,  # "neighborhood"
+        city,  # "city"
+        state,  # "state"
+        country  # "country"
     ]
 
 # Cabeçalho do CSV
 header = [
-    "userId", "name", "userId", "name", "taxIdentifier", "email", "cellphone", "c", "motherName", "bornAt",
-    "paymentAccountType", "paymentAccountCoreBankId", "bankBranchAccount", "login", "investmentProfile", "email",
-    "cellphone", "bankAccount", "motherName", "bornAt", "paymentAccountType", "paymentAccountCoreBankId",
-    "bankBranchAccount", "login", "investmentProfile"
+    "name", "taxIdentifier", "externalID", "cellphone", "email", "bornAt", "motherName", "fantasyName",
+    "bankBranchAccount", "bankAccount", "alias", "street", "addressNumber", "complement", "zipCode", "neighborhood",
+    "city", "state", "country"
 ]
 
 # Definir o layout da interface
@@ -49,11 +67,20 @@ layout = [
     [sg.Text("Número da conta"), sg.Input(key='-CONTA-')],
     [sg.Text("Número da Bankcore"), sg.Input(key='-BANKCORE-')],
     [sg.Text("Número de linhas a gerar"), sg.Input(key='-NUM_LINHAS-', default_text='1')],
-    [sg.Button('Gerar CSV'), sg.Button('Gerar JSON')]
+    [sg.Radio('CPF', "RADIO1", key='-CPF-', enable_events=True), sg.Radio('CNPJ', "RADIO1", key='-CNPJ-', enable_events=True)],
+    [sg.Button('Gerar CSV', disabled=True), sg.Button('Gerar JSON', disabled=True)]
 ]
 
 # Criar a janela
 window = sg.Window('Gerador de contas - Trinus', layout)
+
+def update_buttons(window, values):
+    if values['-CONTA-'] and values['-BANKCORE-'] and (values['-CPF-'] or values['-CNPJ-']):
+        window['Gerar CSV'].update(disabled=False)
+        window['Gerar JSON'].update(disabled=False)
+    else:
+        window['Gerar CSV'].update(disabled=True)
+        window['Gerar JSON'].update(disabled=True)
 
 # Loop de eventos
 while True:
@@ -61,13 +88,17 @@ while True:
     
     if event == sg.WINDOW_CLOSED:
         break
+    
+    update_buttons(window, values)
+    
     if event == 'Gerar CSV':
         nconta = values['-CONTA-']
         bcore = values['-BANKCORE-']
         num_linhas = int(values['-NUM_LINHAS-'])
+        use_cnpj = values['-CNPJ-']
         
         # Geração dos dados
-        rows = [generate_data(bcore, nconta) for _ in range(num_linhas)]  # Ajuste o número de linhas conforme necessário
+        rows = [generate_data(bcore, nconta, use_cnpj) for _ in range(num_linhas)]
         
         # Salvando no arquivo CSV
         with open('dados.csv', 'w', newline='') as file:
@@ -82,13 +113,15 @@ while True:
         nconta = values['-CONTA-']
         bcore = values['-BANKCORE-']
         num_linhas = int(values['-NUM_LINHAS-'])
+        use_cnpj = values['-CNPJ-']
         
         # Geração dos dados
-        rows = [generate_data(bcore, nconta) for _ in range(num_linhas)]  # Ajuste o número de linhas conforme necessário
+        rows = [generate_data(bcore, nconta, use_cnpj) for _ in range(num_linhas)]
         
         # Salvando no arquivo JSON
+        json_data = [dict(zip(header, row)) for row in rows]
         with open('dados.json', 'w') as file:
-            json.dump(rows, file, ensure_ascii=False, indent=4)
+            json.dump(json_data, file, ensure_ascii=False, indent=4)
         
         sg.popup("JSON gerado com sucesso!")
 
