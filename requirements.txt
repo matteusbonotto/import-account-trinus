@@ -1,0 +1,4 @@
+```plaintext
+Faker
+PySimpleGUI
+Unidecode
