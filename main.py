@@ -23,7 +23,7 @@ def generate_data(core_bank_id, bank_account):
     cellphone = remove_masks(fake.phone_number())
     # corebankid
     motherName = fake.name()
-    bornAt = fake.date_of_birth(minimum_age=18, maximum_age=90).isoformat()
+    bornAt = fake.date_of_birth(minimum_age=18, maximum_age=90).strftime('%Y-%m-%d')
     paymentAccountType = 1
     # paymentAccountCoreBankId
     bankBranchAccount = 1
