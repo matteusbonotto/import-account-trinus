@@ -2,6 +2,7 @@ import csv
 import re
 import json
 from faker import Faker
+import unidecode
 import PySimpleGUI as sg
 
 # Inicialização do Faker
@@ -11,6 +12,10 @@ fake = Faker('pt_BR')  # Usar o local pt_BR para gerar CPFs no formato correto
 def remove_masks(value):
     return re.sub(r'\D', '', value)
 
+# Função para remover caracteres especiais de uma string
+def remove_special_characters(value):
+    return unidecode.unidecode(value)
+
 # Função para gerar o userId
 def generate_userId(tax_id):
     return '190c6f655974441da71bef35c' + tax_id[-7:]
@@ -18,10 +23,10 @@ def generate_userId(tax_id):
 # Função para gerar os dados
 def generate_data(core_bank_id, bank_account, use_cnpj):
     tax_id = remove_masks(fake.cnpj() if use_cnpj else fake.cpf())
-    name = fake.name()
+    name = remove_special_characters(fake.name())
     email = name.replace(" ", ".").lower() + "@example.com"
     cellphone = remove_masks(fake.phone_number())
-    motherName = fake.name()
+    motherName = remove_special_characters(fake.name())
     bornAt = fake.date_of_birth(minimum_age=18, maximum_age=90).strftime('%Y-%m-%d')
     fantasyName = "Trinus Account"
     street = "Rua Arnaldo de Jesus"
@@ -64,9 +69,9 @@ header = [
 
 # Definir o layout da interface
 layout = [
-    [sg.Text("Número da conta"), sg.Input(key='-CONTA-')],
-    [sg.Text("Número da Bankcore"), sg.Input(key='-BANKCORE-')],
-    [sg.Text("Número de linhas a gerar"), sg.Input(key='-NUM_LINHAS-', default_text='1')],
+    [sg.Text("Nº Conta"), sg.Input(key='-CONTA-')],
+    [sg.Text("Nº Bankcore"), sg.Input(key='-BANKCORE-')],
+    [sg.Text("Qtde."), sg.Input(key='-NUM_LINHAS-', default_text='1')],
     [sg.Radio('CPF', "RADIO1", key='-CPF-', enable_events=True), sg.Radio('CNPJ', "RADIO1", key='-CNPJ-', enable_events=True)],
     [sg.Button('Gerar CSV', disabled=True), sg.Button('Gerar JSON', disabled=True)]
 ]
