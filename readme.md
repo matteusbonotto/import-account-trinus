@@ -27,25 +27,13 @@ Este projeto é um gerador de contas que cria dados fictícios de usuários no f
 
 1.  Clone o repositório:
     
-    bash
-    
-    Copiar código
-    
     `git clone https://github.com/seu-usuario/gerador-de-contas-trinus.git` 
     
 2.  Navegue até o diretório do projeto:
     
-    bash
-    
-    Copiar código
-    
     `cd gerador-de-contas-trinus` 
     
 3.  Instale as dependências:
-    
-    bash
-    
-    Copiar código
     
     `pip install -r requirements.txt` 
     
@@ -54,11 +42,7 @@ Este projeto é um gerador de contas que cria dados fictícios de usuários no f
 
 1.  Execute o script principal:
     
-    bash
-    
-    Copiar código
-    
-    `python gerador_de_contas.py` 
+    `python main.py` 
     
 2.  Na janela que se abre, selecione a aba desejada (CSV ou JSON).
 3.  Preencha os campos necessários e clique em "Gerar".
@@ -74,11 +58,7 @@ Este projeto é um gerador de contas que cria dados fictícios de usuários no f
 
 ## Estrutura do Projeto
 
-bash
-
-Copiar código
-
-`gerador-de-contas-trinus/
+gerador-de-contas-trinus/
 │
 ├── gerador_de_contas.py      # Script principal com o código de geração de dados
 ├── requirements.txt          # Lista de dependências do projeto
