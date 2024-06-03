@@ -1,4 +1,11 @@
-```plaintext
 Faker
 PySimpleGUI
 Unidecode
+csv
+re
+json
+os
+unidecode
+PySimpleGUI
+random
+string
