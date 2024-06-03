@@ -64,7 +64,6 @@ gerador-de-contas-trinus/
 ├── requirements.txt          # Lista de dependências do projeto
 ├── README.md                 # Documentação do projeto
 └── arquivos gerados/         # Diretório onde os arquivos gerados serão salvos` 
-
 ## Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
